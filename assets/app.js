@@ -1,0 +1,10 @@
+const toggle=document.querySelector('.menu'),nav=document.querySelector('.navlinks');
+toggle?.addEventListener('click',()=>{const open=toggle.getAttribute('aria-expanded')!=='true';toggle.setAttribute('aria-expanded',String(open));nav.classList.toggle('open',open)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){nav?.classList.remove('open');toggle?.setAttribute('aria-expanded','false')}});
+const form=document.querySelector('#request-form');
+if(form){const date=form.querySelector('[type=date]');if(date){const d=new Date();date.min=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-')}
+ const service=new URLSearchParams(location.search).get('service');if(service&&form.elements.service&&Array.from(form.elements.service.options).some(o=>o.value===service))form.elements.service.value=service;
+ form.addEventListener('submit',e=>{e.preventDefault();if(!form.reportValidity())return;const rows=[`السلام عليكم ${form.dataset.business}، أرغب في الاستفسار:`];for(const el of form.querySelectorAll('input,select,textarea')){if(el.name&&el.value.trim())rows.push(`${el.dataset.label}: ${el.value.trim()}`)}rows.push('يرجى تأكيد التوفر والسعر والتفاصيل.');const message=rows.join('\n');document.querySelector('#message').textContent=message;const box=document.querySelector('#review');box.hidden=false;const link=document.querySelector('#open-whatsapp');link.href=form.dataset.phone?'https://wa.me/'+form.dataset.phone+'?text='+encodeURIComponent(message):form.dataset.wa;box.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'center'});document.querySelector('#message').focus()});
+ form.addEventListener('input',()=>document.querySelector('#review').hidden=true);
+ document.querySelector('#copy-message').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(document.querySelector('#message').textContent);document.querySelector('#copy-status').textContent='تم نسخ تفاصيل الطلب.'}catch{document.querySelector('#copy-status').textContent='يمكنك تحديد نص الطلب ونسخه يدويًا.'}});
+}
